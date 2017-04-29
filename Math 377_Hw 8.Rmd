@@ -1,0 +1,400 @@
+---
+title: "HW 8_Math 377_Keisha Baxter"
+output: word_document
+---
+
+1. Let X_1,X_2,...,X_10 be i.i.d. from Normal(20,8^2) and Y_1,Y_2,...,Y_15 be i.i.d. from Normal(16,7^2). Let W=X.bar+Y.bar be the sum of two sample means.
+(a) Give the exact (theoretical) sampling distribution of W.
+(b) Simulate the sampling distribution of W and plot the result. Check that the simulated mean and standard error are close to the theoretical mean and the standard error.
+
+Let $X_1, X_2, \ldots X_{10} \overset{iid}\sim $ N(20, 82) and $Y_1, Y_2, \ldots Y_{15} \overset{iid}\sim$ N(16, 72). Let 
+W = $\hat{X}$ + $\hat{Y}$ ~ N(r mean(W),r sd(W)^2).
+
+knitr::opts_chunk$set(echo = TRUE)
+```{r}
+sums <- 10000
+xbar <- numeric(sums)
+ybar <- numeric(sums)
+for(i in 1:sums){
+  xbar[i] <- mean(rnorm(10, 20, 8))
+  ybar[i] <- mean(rnorm(15, 16, 7))
+}
+W <- xbar + ybar
+hist(W)
+mean(W)  # =35.94252~ 36
+sd(W)    # =3.154874~ 3.15
+mean(W < 40)
+
+r<- sqrt(8^2/10 + 7^2/15)
+```
+
+
+(c) Use your simulation to find the probability P(W<40). Compute an exact value and compare it with approximation from the simulation.
+```{r}
+pnorm(40, 36, r)
+```
+
+2. Let $X be a uniform random variable on the interval [40,60] and Y a uniform random variable on [45,80]. Assume that X and Y are independent.
+(a) Compute the expected values and variance of X+Y. 
+(b) Construct the sampling distribution of X+Y. Describe the graph(histogram) of the distribution of X+Y. Compute the mean and variance of the sampling distribution and compare this to the theoretical mean and variance.
+
+```{r}
+
+X= runif(10000,40,60) #Gives 10000 samples between 40 and 60 from a uniform dist. 
+Y= runif(10000,45,80) #Gives 10000 samples between 45 and 80 from a uniform dist.
+sum= X+Y
+hist(sum) #distribution of the sum
+sd(X)
+sd(Y)
+mean(sum) #Expected Value of X+Y
+var(sum) #Variance of X+Y
+
+```
+(c) Suppose that the time (in minutes) Jack takes to complete his math homework is Uniform(40,60) and the time Jerry takes is Uniform(45,80). Assume they work independently. One day they announce that their total time to finish an assignment was less than 90 min. How likely is this? [Hint: Use the simulated sampling distribution in part (b).]
+
+```{r}
+mean (sum< 90)
+```
+
+3. Let X_1,X_2,...,X_n be the i.i.d. from Normal(mu,sigma^2). Construct the sampling distribution of the variance: 
+(a) In your simulation, draws random samples of size 20 from Normal(25,7^2) and calculates the variance for each sample. How does the sampling distribution appear to be? Verify the theorem about the sampling distribution of the variance by plotting the density curve over its histogram. You may also use the functions qqnorm() and qqline() to check whether the simulated distribution is normally distributed or not.
+
+n=20: 
+```{r}
+var= numeric(10000)
+for (i in 1:10000)
+{ 
+  x= rnorm(20,25,7)
+  var[i]= var(x)
+  }
+mean(var)
+var(var)
+hist(var)
+
+qqnorm(var)
+qqline(var)
+```
+For n=20: The QQ plot appears to be skewed right and is not normally distributed.
+
+Repeat part (a) with n=50:  
+```{r}
+var= numeric(10000)
+for (i in 1:10000)
+{ 
+  x= rnorm(50,25,7)
+  var[i]= var(x)
+  }
+mean(var)
+var(var)
+hist(var)
+
+qqnorm(var)
+qqline(var)
+```
+For n=50: The QQ plot appears to be symmetric and is normally distributed.
+
+Repeat part (a) with n=200. 
+```{r}
+var= numeric(10000)
+for (i in 1:10000)
+{ 
+  x= rnorm(200,25,7)
+  var[i]= var(x)
+  }
+mean(var)
+var(var)
+hist(var)
+
+qqnorm(var)
+qqline(var)
+```
+For n=200: The QQ plot appears to be skewed left and is not normally distributed.
+
+4)   Consider a population that has a normal distribution with mean, mu=36, standard deviation, sigma=8.
+(a) The sampling distribution of the sample mean X.bar for samples of size 200 from this population will have what distribution, mean, and standard error?
+(b) Use R to draw one random sample of size 200 from this population.  Conduct a exploratory data analysis(EDA) on your sample: 
+    -plot the data(histogram, normal quantile plots)
+    -describe the shape (bell-shaped, symmetric, skewed, etc.), spread, and bias of the distribution 
+    -provide summary statistics
+(c) Compute the bootstrap distribution for your sample. Plot it and note that the bootstrap mean and standard error.
+(d) Compare the bootstrap distribution to the theoretical sampling distribution by creating a table in Rmarkdown file:
+Table Header    | Second Header
+-------------   | -------------
+Table Cell      | Cell 2
+Cell 3          | Cell 4
+
+(e) Repeat from(a) to (d) for sample sizes of n=50 and n=10. Carefully describe your observations about the effects of sample size on the bootstrap distribution.
+
+```{r}
+mu<-36
+sd<-8
+x.bar<-rep(0,10000) 
+for (i in 1:10^5){ 
+  xsamp<-rnorm(200,mu,sd) 
+  x.bar[i]<-mean(xsamp)
+}
+mean(x.bar) #[1] 35.99474
+hist(x.bar)
+
+qqnorm(x.bar) 
+qqline(x.bar)
+
+std_err<- 8/sqrt(200)
+std_err #[1] 0.5656854
+
+#(b)
+samp<- rnorm(200,36,8)
+
+boot.st<- numeric(200)
+for(i in 1:10^5){
+  x<-sample(samp,200,replace=TRUE)
+  boot.st[i]<-mean(x)
+}
+mean(boot.st) #[1] 35.6207
+var(boot.st) #[1] 0.3425472
+sd(boot.st)# [1] 0.5852753
+hist(boot.st)
+hist(samp)
+
+std_err #[1] 0.5656854
+mean(samp) # [1] 35.62385
+sd(samp) #[1] 8.233688
+```
+#N = 10
+```{r}
+mu<- 36
+std<- 8 
+x.bar<-rep(0,10000) 
+for (i in 1:10000)
+{ 
+  Xsamp<-rnorm(10,mu,std) 
+  X[i]<-mean(Xsamp)
+}
+mean(X) #[1] 35.99326
+hist(X,main= "n= 10")
+
+qqnorm(X,main= "n= 10 ")
+qqline(X)
+```
+#N = 50
+```{r}
+mu<-36
+std<-8 
+x.bar<-rep(0,10000) 
+for (i in 1:10000)
+{ 
+  Xsamp<-rnorm(50,mu,std) 
+  X[i]<-mean(Xsamp)
+}
+mean(X) #[1] 35.99424
+hist(X,main= "n= 50")
+
+qqnorm(X,main= "n= 50 ")
+qqline(X)
+
+```
+#N = 100
+```{r}
+mu<-36
+std<-8 
+x.bar<-rep(0,10000) 
+for (i in 1:10000)
+{ 
+  Xsamp<-rnorm(100,mu,std) 
+  X[i]<-mean(Xsamp)
+}
+mean(X) #[1] 35.99472
+hist(X,main= "n= 100")
+
+qqnorm(X,main= "n= 100 ")
+qqline(X)
+
+```
+5. Consider a population that has a gamma distribution with parameters r=5, lambda=1/4.
+(a) Construct the sampling distribution of the sample mean X.bar for samples of size 200 from this population. plot the distribution and describe the  distribution: shape, mean, and standard error?
+(b) Use R to draw one random sample of size 200 from this population.  Conduct exploratory data analysis(EDA) on your sample: 
+    -plot the data(histogram, normal quantile plots)
+    -describe the shape (bell-shaped, symmetric, skewed, etc.), spread, and bias of the distribution 
+    -provide summary statistics.
+(c) Compute the bootstrap distribution for your sample. Plot it and note that the bootstrap mean and standard error.
+(d) Compare the bootstrap distribution to the approximate theoretical sampling distribution by creating a table in Rmarkdown file (as above).
+(e) Repeat from(a) to (d) for sample sizes of n=50 and n=10. Carefully describe your observations about the effects of sample size on the bootstrap distribution.
+
+```{r}
+samp<-rgamma(200,5,1/4) 
+mean(samp)
+sd(samp)
+hist(samp)
+```
+
+part B
+```{r}
+samp<-rgamma(200,5,1/4) 
+N<-10000
+boot.st<- numeric(N)
+for (i in 1:N)
+{
+x<- sample(samp,200, replace=TRUE) 
+boot.st[i]<-mean(x)
+} 
+mean(boot.st)
+sd(boot.st)
+hist(boot.st)
+
+qqnorm(boot.st, main= "boot.st")
+qqline(boot.st)
+```
+
+part c
+```{r}
+N=10000
+for (i in 1:N){
+x<-sample(samp,200, replace=TRUE)
+boot.st[i]<-mean(x) 
+}
+mean(boot.st)
+sd(boot.st)
+hist(boot.st)#
+```
+
+part d
+```{r}
+mean(rgamma(50,5,1/4))
+sd(rgamma(50,5,1/4))
+
+samp<-rgamma(50,5,1/4) 
+mean(samp)
+sd(samp)
+hist(samp)
+```
+
+Part E(a): Repeat part a to d with n=50
+```{r}
+#Part E(a) 
+mean(rgamma(50,5,1/4))
+
+sd(rgamma(50,5,1/4))
+
+samp<-rgamma(50,5,1/4) 
+mean(samp)
+
+sd(samp)
+hist(samp)
+
+#Part E(b)
+samp<-rgamma(50,5,1/4) 
+N<-10000
+boot.st<-numeric(N)
+for (i in 1:N)
+  {
+  x<-sample(samp,50, replace=TRUE) 
+  boot.st[i]<-mean(x)
+  } 
+mean(boot.st)
+sd(boot.st)
+hist(boot.st)
+
+qqnorm(boot.st, main= "boot.st n=50")
+qqline(boot.st)
+```
+
+
+```{r}
+#Part E(c) 
+N<-10000
+for (i in 1:N)
+     {
+       x<-sample(samp,50, replace=TRUE)
+       boot.st[i]<-mean(x) 
+       }
+mean(boot.st)
+sd(boot.st)
+hist(boot.st)
+```
+#Part E(d)
+
+
+```{r}
+#Part E(a); n=10
+N<-10
+
+samp<-rgamma(10,5,1/4) 
+
+sd(samp)
+hist(samp)
+
+#Part E(b); n=10
+mean(rgamma(10,5,1/4)) 
+sd(rgamma(10,5,1/4))
+samp<-rgamma(10,5,1/4) 
+N<-10^5
+boot.st<-numeric(N)
+for (i in 1:N)
+{
+x<-sample(samp,10, replace=TRUE) 
+boot.st[i]<-mean(x)
+}
+mean(boot.st)
+#[1] 20.98759 
+sd(boot.st)
+hist(boot.st)
+
+qqnorm(boot.st,main = "my.boot n = 10 ")
+qqline(boot.st)
+
+#Part E(c); n=10
+for (i in 1:N){
+x<-sample(samp,50, replace=TRUE)
+boot.st[i]<-mean(x) }
+mean(boot.st)#the mean of my boot  [1] 18.23762
+sd(boot.st)# The standard deveation  [1] 1.422269
+hist(boot.st)
+```
+6. The data set "fishmercury.txt" ,which is attached above in this file , contains mercury levels (parts per million) for 30 fish caught in lakes in some place in US.
+(a) Create a index plot, histogram, and boxplot of the data.
+(b) Bootstrap the mean and find the bootstrap standard error and the 95% bootstrap percentile interval.
+(c) Remove the outlier and repeat part (b). [Hint: you may use the code below to remove the outlier in a data set.]
+(d) What effect did removing the outlier have on the bootstrap distribution, in particular, the standard error?
+
+```{r}
+setwd("~/Documents/CCNY Spring 2017/Math 377/therbook")
+fish_merc= read.csv("fishmercury.txt", header= T)
+N = 10^4
+boot.mean <- numeric(N)
+fishmer <- fish_merc[,1]
+for(i in 1:N){
+        boot.mean[i] <- mean(sample(fishmer,length(fishmer),replace=TRUE))
+}
+par(mfrow = c(2,2))
+plot(boot.mean, main = "Index plot of Mercury levels", ylab = "Mercury")
+hist(boot.mean, main = "Histogram of Mercury Levels", xlab = "Mercury")
+abline(v= mean(boot.mean),col= "blue")
+boxplot(boot.mean, ylab = "Mercury", main = "Boxplot of Mercury level")
+mean(boot.mean)
+mean(boot.mean)- mean(fishmer)
+sd(boot.mean)
+quantile(boot.mean, prob = c(.025, .975))
+
+
+fishmer2 <-fish_merc[fish_merc < max(fish_merc)]
+boot.mean2 <- numeric(N)
+
+for(i in 1:N){
+        boot.mean2[i] <- mean(sample(fishmer2,length(fishmer2),replace=TRUE))
+}
+
+par(mfrow = c(2,2))
+plot(boot.mean2, main = "Index plot of Mercury levels", ylab = "Mercury")
+hist(boot.mean2, main = "Histogram of Mercury Levels", xlab = "Mercury")
+abline(v= mean(boot.mean2),col= "blue")
+boxplot(boot.mean2, ylab = "Mercury", main = "Boxplot of Mercury level")
+
+mean(boot.mean2)
+mean(boot.mean2)- mean(fishmer2)
+sd(boot.mean2)
+
+quantile(boot.mean2, prob = c(.025, .975))
+
+```
+
+

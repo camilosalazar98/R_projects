@@ -1,0 +1,228 @@
+---
+title: "Camilo Salazar Hw 6  Math 377"
+output:
+  pdf_document: default
+  html_document: default
+---
+A study of stress on among the students in a college campus shows that the stress scores follow a Uniform distribution with the lowest stress score equal to 1 and the highest equal to 5. 
+
+Use a sample of 75 students and those four (d,p,q,r) built-in R functions for the probability distribution of random variable to compute the following [Hint: you may use the Central Limit Theorem]:
+
+
+(a) The probability that the average stress score for the 75 students is less than 2.
+```{r}
+#(a)
+Uniform_distribution <- runif(75,1,5) #scores follow a Uniform distribution
+mean_1 <- mean(Uniform_distribution)# the mean found in Uniform_distribution
+mean_1
+Sd <- sd(Uniform_distribution)#The standard deviation
+Sd
+p <-pnorm(75, mean_1, Sd)
+p<-1-p
+p
+
+```
+
+(b) The 90th percentile for the average stress score for the 75 students.
+```{r}
+#(b)
+# remember Mean here is 3 because (a+b)/2 = (1+5)/2 = 3
+#sd here is sd = sqrt((b-a)^2/12)
+#remeber that the standard devation of the sampling distribution of x bar is sigma_x_bar = sigma/sqrt(n)
+qnorm(0.90,3,1.15/sqrt(75))
+```
+(c) The probability that the total of the 75 stress scores is less than 200.
+```{r}
+#(c)
+#remeber that the standard devation of the sampling distribution of x bar is sigma_x_bar = sigma/sqrt(n)
+#The central limit the theorem for sums
+#sqrt(n)*sigma of x
+n <- 75
+sd = sqrt((5-1)^2/12)
+standard_Devation_of_sums <-(sqrt(n)*(sd))
+standard_Devation_of_sums
+# n · µX = the mean of ΣX
+mean_ΣX = (75)*3
+# the Prob that the score is less than 200 is below
+pnorm(200,mean_ΣX,standard_Devation_of_sums)
+```
+(d) The 90th percentile for the total stress score for the 75 students.
+```{r}
+#(d)
+qnorm(.90,mean_ΣX,standard_Devation_of_sums)
+```
+PART B:
+
+Consider again the same stress study that is described in PART A and answer the same questions. However, this time assume that the stress score may obtain only the values 1, 2, 3, 4 or 5, with the same probability for obtaining each of the values  [Hint: you may use the Central Limit Theorem] .
+```{r}
+range_1<-floor(runif(75,1,6))# gives number between 1-5
+mean1<-mean(range_1)# there mean 
+Standard_devation<-sd(range_1)
+prob<-pnorm(75,range_1,mean1)# the prob.
+prob<-(1-prob)
+prob
+```
+
+3. Using the sampling distribution of sample mean to estimate the mean of the variables "xv" and "ys" in the data "scatter1.txt" from the R book.
+
+(a) For the simulation do the sampling 2000 times with sample size n=20 and n=50.
+```{r}
+#xv
+setwd("~/Desktop/R/therbook")
+scatter1<-read.table("scatter1.txt",header = TRUE)
+attach(scatter1)#guide was from the professor notes lol
+str(scatter1)
+summary(scatter1)
+col<-scatter1$xv
+n<-2000 #since n is 2000
+X.bar1<-rep(0,n)
+for(i in 1:n){
+  X.samp<-sample(col,20)
+  X.bar1[i]<-mean(X.samp)
+  #print(X.bar)
+}
+hist( X.bar1)
+mean(col)
+mean(X.bar1)
+var(col)#vaneriance 
+var(X.bar1)#variance
+sd(col)
+sd(X.bar1)#standard devation
+
+
+col<-scatter1$xv
+n<-2000 #since n is 2000
+X.bar<-rep(0,n)
+for(i in 1:n){
+  X.samp<-sample(col,50)
+  X.bar1[i]<-mean(X.samp)
+  #print(X.bar)
+}
+mean(col)
+mean(X.bar)
+var(col)
+var(X.bar)#variance
+sd(col)#standard devation
+sd(X.bar)
+
+#ys
+
+
+col<-scatter1$ys
+n<-2000 #since n is 2000
+X.bar<-rep(0,n)
+for(i in 1:n){
+  X.samp<-sample(col,20)
+  X.bar[i]<-mean(X.samp)
+  #print(X.bar)
+}
+hist(X.bar)
+mean(col)
+mean(X.bar)
+var(col)#variance
+var(X.bar)#variance
+sd(col)#standard devation
+sd(X.bar)
+
+col<-scatter1$ys
+n<-2000 #since n is 2000
+X.bar<-rep(0,n)
+for(i in 1:n){
+  X.samp<-sample(col,50)
+  X.bar[i]<-mean(X.samp)
+  #print(X.bar)
+}
+mean(col)
+mean(X.bar)
+var(col)#variance
+var(X.bar)
+sd(col)##standard devation
+sd(X.bar)
+```
+(b) Use the sampling distribution(with n=20) that you constructed in (a) to compute an approximation of the probability of the sample mean falling within .5 of the mean of each variable "xv" and "ys". 
+```{r}
+#(b)
+X.bar1<-rep(0,n)
+for(i in 1:n){
+  X.samp<-sample(col,20)
+  X.bar1[i]<-mean(X.samp)
+  #print(X.bar)
+}
+col<-scatter1$xv#set the columns 
+col1<-scatter1$ys
+setwd("~/Desktop/R/therbook")
+data<-read.table("scatter1.txt",header = T)
+attach(data)#guide was from the professor notes 
+str(data)
+summary(data)
+#xv
+mean(abs(X.bar1-mean(col))<=0.5)
+
+#ys
+mean(abs(X.bar1-mean(col1))<=0.5)# fall with in .5
+```
+(c) Do the same question for (b) with n=50.  
+```{r}
+#(c)
+X.bar2<-rep(0,n)
+for(i in 1:n){
+  X.samp<-sample(col,50)
+  X.bar2[i]<-mean(X.samp)
+  #print(X.bar)
+}
+col<-scatter1$xv#set the columns 
+col1<-scatter1$ys
+setwd("~/Desktop/R/therbook")
+data<-read.table("scatter1.txt",header = T)
+attach(data)#guide was from the professor notes 
+str(data)
+summary(data)
+#xv
+mean(abs(X.bar2-mean(col))<=0.5)
+#mean falling within .5 of the mean 
+
+#ys
+mean(abs(X.bar2-mean(col1))<=0.5)
+```
+
+4.
+A Sampling distribution can be considered in the context of  theoretical distribution models as well.  We can approximate the distribution of the sample mean by simulation:
+
+We do a measurement X from the abstract population distributed by Binomial(10,0.5) . Assume that 70 independent measurements are done with this distribution,(i.e.,the sample size n=70).
+
+(a) Construct the distribution of the sample mean by using a simulation producing 10000 sample means.
+```{r}
+#(a)
+means<-numeric(10000)#from notes 
+for (i in 1:10000){
+  # n = 70 prob = 0.5 sampling_size= 10 
+  means[i]<-mean(rbinom(70,10,.5))
+  }
+```
+(b) Plot the histogram of the distribution that you constructed in (a).
+```{r}
+#(b)
+hist(means,ylim=c(0,3000),main="") 
+```
+(c) Overlay the smooth density curve of the Normal distribution on the histogram of the sampling distribution that was plotted in (b). 
+```{r}
+#(c)
+hist(means,ylim=c(0,3000),main="") 
+mean(means) #means
+sd(means) #standard devation 
+xv<-seq(4.5,5.5,0.01)#we make a smooth normal curve 
+yv <- dnorm(xv,mean=mean(means),sd=sd(means))*1225#From notes
+lines(xv,yv)
+```
+(d) Explain why the variance of the sampling distribution is always smaller than that of the distribution of the population.  
+```{r}
+#(d)
+binomial1<-rbinom(70,10,.5)
+mean1<-mean(binomial1)# means
+mean1
+variance<-var(binomial1)# the variance of rbionm 
+variance
+aws<-variance/70
+aws
+```
+It is small because the varince I get is 2.311387 and the sampling of the varince I get 0.03301982. Since n = 70 we divide by our varince. Its also becuse we are grouping them.

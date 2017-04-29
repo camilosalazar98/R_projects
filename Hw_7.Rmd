@@ -1,0 +1,259 @@
+---
+title: "Camilo Salazar Hw 7  Math 377"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+1. State the (Weak and Strong) Law of Large Numbers. You may consult with any text book for probability theory or mathematical statistics. Learn how to generate mathematical symbols in R Markdown file. Include some  mathematical symbols inboo the statement of the theorem.
+
+The law Large numbers (weak)
+
+ Let $X_{1},X_{2}...$ be a sequence of independent and identically distributed random vari- ables, each having finite mean E[Xi] = μ. Then, for any ε > 0,
+ $P\{|\frac{X_{1}+...X_{n}}{n}|\ - \mu \geq ε \}$ as $ n \rightarrow \infty$
+Proof. 
+We shall prove the theomrem only under the additional assumption that the random variables have a finite variance $\sigma^2$. Now, since
+$E[\frac{X_{1}+...X_{n}}{n}] = \mu$ and $Var(\frac{X_{1}+...X_{n}}{n}) = \frac{\sigma^2}{n}$
+
+it follow from  chelbyshev's inequality that
+$P\{|\frac{X_{1}+...X_{n}}{n}|\ - \mu \geq ε \} \leq \frac{\sigma^2}{nε^2}$
+and the result is proven.
+The weak law of large numbers was originally proven by James Bernoulli for the special case where the Xi are 0, 1 (that is, Bernoulli) random variables. His statement and proof of this theorem were presented in his book Ars Conjectandi, which was published in 1713, eight years after his death, by his nephew Nicholas Bernoulli. Note that, because Chebyshev’s inequality was not known in Bernoulli’s time, Bernoulli had to resort to a quite ingenious proof to establish the result. The general form of the weak law of large numbers presented in Theorem 2.1 was proved by the Russian mathematician Khintchine.
+
+
+The law Large numbers (large)
+Let $X_{1},X_{2}...$ be a sequence of independent and identically distributed random vari- ables, each having a finite mean $\mu = E[X_{i}]$. Then, with probability 1
+
+$\frac{X_{1}+...X_{n}}{n} \rightarrow \mu$ as $ n \rightarrow \infty$
+As an application of the strong law of large numbers, suppose that a sequence of independent trials of some experiment is performed. Let E be a fixed event of the experiment, and denote by P(E) the probability that E occurs on any particular trial. Letting
+$\[ X_{i} =
+  \begin{cases}
+    1       & \quad \text{if E occur so n the ith trial}\\
+    
+    0       & \quad \text{if E does not occur on the ith trial} \\
+  \end{cases}
+\]$
+we have, by the strong law of large numbers, that with probability 1,
+$\frac{X_{1}+...X_{n}}{n} \rightarrow E[X]= P(E)$
+
+Since $X_{1}+X_{2}...+X_{n}$ represents the number of times that the event E occurs in the first n trials, we may interpret Equation (4.1) as stating that, with probability 1, the limiting proportion of time that the event E occurs is just P(E).
+Although the theorem can be proven without this assumption, our proof of the strong law of large numbers will assume that the random variables Xi have a finite fourth moment. That is, we will suppose that E[Xi^4] = K < q.
+
+
+2. Using the nested for loops(i.e. for loop defined inside a for loop) to demonstrate the law of large numbers with R. 
+
+(a) Take sample from X~Uniform(3,7).
+
+```{r}
+x<-runif(1,3,7)
+x
+
+```
+
+(b) Run your outer for loop from 10 to 2010 with step size 100 so that the sample size gets increased: n=10,110,210,...,2010
+```{r}
+
+for(a in seq(10,2010,100)) #outside for loop
+{
+  print(c(a))#Test the it start from 10 and increase by 100 until 2010
+}
+
+```
+
+
+(c) Run the inner for loop to construct the sampling distribution of the mean with 100000 random numbers.
+
+
+
+
+(d) Compute mean of the sampling distribution  and standard deviations for each n in the outer loop and print them out one row, (e.g. print(c(mean,std)).
+
+(e) Generate the histogram for each sample size n with fixed xlim=c(3.5,6.5) in the outer loop.
+
+You may use par(mfrow=c(3,3)) before the loops begin to see the slide. 
+
+```{r}
+
+ means<-rep(0,2010)
+for(a in seq(10,2010,100)) #outside for loop
+{
+  for (i in 1:10000)
+    {
+    Xsamp<-runif(a,3,7)
+    means[i]<-mean(Xsamp)
+    }
+  #Test that it the the sample from a 
+#This takes the means
+#please be aware this goes to 10000 and might crash R
+
+  Means_1<-mean(means)
+  sd(means)
+  print(c(Means_1,sd))#Test the it start from 10 and increase by 100 until 2010
+ 
+  hist(means,xlim=c(3.5,6.5),main = "")
+
+}
+
+
+```
+
+3. Suppose the (sorted) data are x_1 < x_2 <,...,< x_n and we want to see if these data come from the Normal distribution. The normal quantile plot for comparing distributions is a plot of the x's against : (q_1,x_1), (q_2,x_2), ... , (q_n,x_n)
+
+where q_k is the k/(n+1) quantile of the standard normal distribution. If these points fall (roughly) on a straight line, then we conclude that the data follow an approximate normal distribution. This is one type of quantile-quantile plot, (or  q-q plot for short), in which quantiles of a data set are plotted against quantiles of a distribution or of another data set (More on this see the section 4.4.1 Hoog, Mckean and Craig).  In R the commands qqnorm() and qqline() can be used to create normal quantile plots.
+
+You may investigate normal quantile plots of X with sample size n as follow (see section 8.1 and 8.1.2 in the R book):
+
+     par(mfrow=c(2,1) )
+
+
+      X<-rnorm(n) 
+
+      qqnorm(X)
+
+      qqline(X)
+
+      hist(X)
+
+(a) Draw a random sample of size n=15 from X~ Normal(0,1) and plot both the normal quantile plot and the histogram.
+
+Do the points on the quantile plot appear to fall on a straight line? Is the histogram symmetric, unimodal, and mound shaped?
+
+Do this simulation several times.
+```{r}
+n=15#sample size
+X<-rnorm(n) #random normal
+qqnorm(X)#qq plot
+qqline(X)# adding the line
+hist(X)#bar graph
+```
+
+
+(b) Repeat part(a) for samples of size n=30, n=60, and n=100.
+```{r}
+n=30#When n is 30
+X<-rnorm(n)#random normal
+qqnorm(X)#qq plot
+qqline(X)# adding the line for the qqplot
+hist(X)# the bar graph
+#Everything is the same below in term of the produre taken
+n=60#When n is 60
+X<-rnorm(n) 
+qqnorm(X)
+qqline(X)
+hist(X)
+
+n=100#When n is 100
+X<-rnorm(n) 
+qqnorm(X)
+qqline(X) 
+hist(X)
+```
+
+(c) Repeat part (a) and (b) with  X~ Exponential(rate), where rate=1
+```{r}
+n=15#When n is 100
+X<-rexp(n,1) 
+qqnorm(X)
+qqline(X)# getting the QQ plot
+hist(X,main="")#getig the bar plot
+
+# note that every thing below is the same procedure 
+n=30#When n is 100
+X<-rexp(n,1)  
+qqnorm(X)
+qqline(X) 
+hist(X,main="")
+
+
+n=60#When n is 100
+X<-rexp(n,1) 
+qqnorm(X)
+qqline(X) 
+hist(X,main="")
+
+
+n=100#When n is 100
+X<-rexp(n,1) 
+qqnorm(X)
+qqline(X) 
+hist(X,main="")
+
+```
+
+(d)  Repeat part (a) and (b) with  X~ Uniform(3,7)
+```{r}
+n=15
+X<-runif(n,3,7)
+qqnorm(X)
+qqline(X)
+hist(X)
+
+n=30
+X<-runif(n,3,7)
+qqnorm(X)
+qqline(X)
+hist(X)
+
+n=60
+X<-runif(n,3,7)
+qqnorm(X)
+qqline(X)
+hist(X)
+
+n=100
+X<-runif(n,3,7)
+qqnorm(X)
+qqline(X)
+hist(X)
+```
+
+(e) What do you discover about using the graphs of q-q plot to assess whether or not a data set follows a normal distribution?
+I found when doing the uniform and the norm they were pretty simllar. When doing the expontial it look a little different for the normal dist.
+
+4.Investigate the variables "Price" and "Weight" in the data "car.test.frame.txt" from the R book. Make your decision about the distribution of the values whether they are the normally distributed or not using the following tools :
+(a) Use q-q plot.
+(b) Use the normal density curve with frequency distribution,i.e. histogram.
+(c) Use the function quantile() and qnorm() to identify the interval that contains 95% of the distribution. 
+```{r}
+# (a)
+setwd("~/Desktop/R/therbook")
+data<-read.table("car.test.frame.txt",header = T)
+attach(data)
+qqnorm(Price)# QQ plot
+qqline(Price)
+
+qqnorm(Weight)#qq plot
+qqline(Weight)
+#(b)
+hist(Price)
+
+
+
+#(c)
+quantile(Price,c(.025,.95))# testing got 95%
+qnorm(c(.025,.95),mean(Price),sd(Price))#Testing what qnorm is
+
+quantile(Weight,c(.025,.95))# testing got 95%
+qnorm(c(.025,.95),mean(Weight),sd(Weight))#Testing what qnorm is
+```
+
+5. Read sections, 2.1 Case Studies and 2.2 One Sample t-tools and the paired t-Test in Chapter 2 Inference using t-Distributions of our second text book: The Statistical Sleuth. Write a short summary for each subsection with one or two paragraphs.
+
+2.1.1
+In the first part of this book it speaks about how Darwin was trying to find a way to proof his theory of evolution. One of Darwin cousins tried to use a mathictemcail method in order to investage his findings. It states in the book "Francis Galton, to use mathematical analysis of numerical characteristics of animals to find evidence of species adaptation." The way they were testing this by invesagating the beak sizes of the finches. Overall it took until the 1980s biologists Peter and Rosemary Grant and colleagues found out that there was a drought. They check the sizes of the beaks and realize there was a difference "ince this was an observational study, a causal conclusion—that the drought caused a change in the mean beak size".
+
+2.1.2
+In this part of the chapter they were talking about if there is a statical realtionship physiological indicators associated with schizophrenia. In 1990 a team of researchers decide to study genetic and socioeconomic differences by examining 15 pairs of monozygotic twins. They kept try of these individuals while they grew up. The reseachers used magnetic resonance imaging to measure the volumes and sufaces of the brain of the twins. In the chapter it states that they found "ubstantial evidence that the mean difference in left hippocampus vol- umes between schizophrenic individuals and their nonschizophrenic twins is nonzero (two-sided p-value D 0:006, from a paired t-test) pg31". They found that volume is 0.20cm3 smaller for those with schizophrenia with a 95% interval confidence rating they use a pair t test.
+
+2.2.1
+During this section of the book they are talking about the importantce of Sampling Distribution of a Sample Average. It's imporant to have a large sample in order to get a accurte information. The experiment with schizophrenia and testing the different sizes of the brain was a small sample of 15 individuals. It would be difficult to learn anything about the characteristics of the sampling distribution. They also speak about what is the meaning of mu and sigma. The mu is the mean and sigma is the standard deviation.
+
+2.2.2
+In 2.2.2 they are talking about the standard error that you can get from the Average in Random Sampling. The standard error is estimate of the standard deviation in its sampling distribution. The best guess you can have is what you used to guess the parameter and the parameter itself. By subtracting these two you get you best guess. They do offer a equation that you can use which is SE(Y_bar) = S/sqrt(n).
+
+
+2.2.3
+The section in 2.2.3 the speak about the The Z-Ratio test. In the book it states that "the sampling distribution of the estimate is normal, then the sampling distribution of Z is standard normal, where the mean is 0 and the standard deviation is 1." The equaction for the Z -Ratio test as follows Z = (Estimate–Parameter)/SD(Estimate). This allows us to understanding the size estimation error. If the standard devation estimate is unknown. Then they use a method called The t-Ratio test. It equals t-Ratio = (Estimate-Parameter)/(SE.Estimate). The t test does not have a standard normaldistribution, because there is extra variability due to estimating the standard devtation.owever, the sampling distribution of the t-ratio is known.
+
+2.2.4
+The last section 2.2.4 they talk about Unraveling the t-Ratio. They talk about differnt situation were mu can be different values. One example they give what if mu is zero. The first thing the say is to test mu. "So here are your choices: (a)mu != 0; or (b) mu = 0 and the random sampling resulted in a particularly nonrepresentative sample." They mention confidence intervals and trying to to get 95 % confidence interval for mu.
