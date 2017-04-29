@@ -1,0 +1,674 @@
+---
+title: "Midterm_Project"
+author: "Camilo Salazar"
+date: "4/11/2017"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+1. The Empirical Cumulative Distribution Functions (ecdf) (See p.306 the R book) is an estimate of the underlying cumulative distribution function for a sample. The empirical cdf is a step function essentially. The empirical cumulative distribution function is useful for comparing two distributions. 
+
+(a) Use the command plot.ecdf() to plot the empirical cumulative distribution function of the following vector:
+X<-c(3,6,15,15,17,19,24)
+plot.ecdf(X)
+
+(b) Draw a random sample of size 25 from standard normal distribution N(0,1) and plot the empirical cumulative distribution function of the sample with xlim=c(-4,4). Impose the normal cdf using curve(....,col="blue",add = TRUE) and add vertical line at the value 0 with red color. 
+```{r}
+#A
+X<-c(3,6,15,15,17,19,24)#The vector
+plot.ecdf(X)#plot funtion
+```
+
+
+
+```{r}
+#B
+x<-25
+random_sample<-rnorm(x) #random sample of 25
+
+plot.ecdf(random_sample)#ploting random sample
+curve(pnorm(x),col="blue",add=TRUE,xlim=c(-4,4),ylim=c(-4,4))#Adding normal
+#I added ylim=c(-4,4) to make the graph more semetric
+abline(v=0,col="red")
+
+
+
+```
+
+2. The birth weight of a baby is of interest to health officials because many studies have shown possible links 
+between this weight and conditions in later life, such as obesity or diabetes. Researchers look for possible relationships 
+between the birth weight of a baby and the age of the mother or whether or not she smoked cigarettes or drank alcohol during 
+her pregnancy. The Centers for Disease Control and Prevention (CDC), using data provided by the U.S. Department of Health and 
+Human Services, National Center for Health Statistics, the Division of Vital Statistics as well as the CDC, maintain a database
+on all babies born in a given year
+
+          http://wonder.cdc.gov/natality-current.html.
+
+We will investigate different samples taken from CDC's database of births.
+
+The dataset "birthweights.csv", which is attached above in this file, we will investigate consists of a random sample of 1009 babies born in North Carolina during 2004. The babies in the 
+sample had a gestation period of at least 37 weeks and were single births(i.e. not a twin or triplet).
+(a) Use the command subset(birthweights,?????,drop=T) create new vectors, (e.g. weightbabyBoy and weightbabyGirl), from the data by selecting the column Weight (select = Weight) and extracting those rows corresponding to the males (subset = Gender == "Male") or females (subset = Gender == "Female"). The drop=T argument ensures that we have a vector object as opposed to a data frame.
+(b) Use the following code to compare the ecdf's
+(i) for male and female new born babies birth weights.
+(ii) for new born babies birth weights with Smoking and Non Smoking Mother 
+(iii) for new born babies birth weights with mother used Alcohol and NonAlcohol
+```{r}
+setwd("~/Desktop/R/therbook")
+birthweights<-read.csv("birthweights2004.csv",header = TRUE)#Get the data
+attach(birthweights)
+head(birthweights)#reads the head
+str(birthweights)
+summary(birthweights)
+
+weightbabyBoy<-subset(birthweights,select=c(Gender,Weight), Gender == "Male" ,drop=T)#Selects only the male and the weight
+weightbabyBoy$Weight#to get weight
+
+weightbabyGirl<-subset(birthweights,select=c(Gender,Weight), Gender == "Female" ,drop=T)
+#Selects only the Female and the weight
+weightbabyGirl$Weight#to get weight
+
+#Part B_____________________________________
+
+#(i) for male and female new born babies birth weights.
+
+weightbabyGirl<-subset(birthweights,select=c(Gender,Weight), Gender == "Female" ,drop=T)
+weightbabyBoy<-subset(birthweights,select=c(Gender,Weight), Gender == "Male" ,drop=T)
+x<-c(weightbabyGirl$Weight)
+
+plot.ecdf(x, xlab = "grams")#Adds the marker to the graph
+par(new=TRUE)
+x<-c(weightbabyBoy$Weight)
+plot.ecdf(x, col = "yellow", pch =2, add = TRUE,main="Baby weight")#Make the markers on the graph blue
+abline(v = mean(x), lty = 2, col="blue")#add the mean dash line 
+curve(pnorm(x,mean(x),sd(x)),1000,6000, col="red",add = TRUE)#add a normal curve
+legend(x= 3000,y=1, legend = "females",col = "yellow", pch = 10)# adds the female in the graph 
+legend(x= 2000,y=1, legend = "males",col = "black", pch = 20)
+legend(x= 4000,y=.2, legend = "Baby weight",col = "white", pch = 20)
+
+#(II)for new born babies birth weights with Smoking and Non Smoking Mother 
+babyweight_nonsmoking_mothers<-subset(birthweights,select=c(Weight,Smoker),Smoker=="No" ,drop=T)#girls with smoking moms
+babyweight_smoking_mothers<-subset(birthweights,select=c(Weight,Smoker), Smoker == "Yes"  ,drop=T)#Boys with smoking mom
+
+x<-babyweight_nonsmoking_mothers$Weight
+plot.ecdf(x, xlab = "grams")#Adds the marker to the graph
+par(new=TRUE)
+x<-babyweight_smoking_mothers$Weight
+plot.ecdf(x, col = "orange", pch =2, add = TRUE)#Make the markers on the graph blue
+abline(v = mean(x), lty = 2, col="blue")#add the mean dash line 
+curve(pnorm(x,mean(x),sd(x)),1000,6000, col="red",add = TRUE)#add a normal curve
+legend(x= 1600,y=1, legend = "smoking mothers baby weight",col = "red", pch = 1)# adds the male in the graph
+legend(x= 3300,y=.2, legend = "baby_weight_nonsmoking_mothers",col = "black", pch = 20)
+legend(x= 3500,y=.4, legend = "baby_weight_smoking_mothers",col = "orange", pch = 20)
+
+#(iii) for new born babies birth weights with mother used Alcohol and NonAlcohol
+
+babyweight_nonAlcohol_mothers<-subset(birthweights,select=c(Weight,Alcohol),Smoker=="No" ,drop=T)#girls with smoking moms
+babyweight_Alcohol_mothers<-subset(birthweights,select=c(Weight,Alcohol), Smoker == "Yes"  ,drop=T)#Boys with smoking mom
+
+x<-babyweight_nonAlcohol_mothers$Weight
+plot.ecdf(x, xlab = "grams")#Adds the marker to the graph
+par(new=TRUE)
+x<-babyweight_Alcohol_mothers$Weight
+plot.ecdf(x, col = "violet", pch =2, add = TRUE)#Make the markers on the graph blue
+abline(v = mean(x), lty = 2, col="blue")#add the mean dash line 
+curve(pnorm(x,mean(x),sd(x)),1000,6000, col="red",add = TRUE)#add a normal curve
+legend(x= 1600,y=1, legend = "smoking mothers baby weight",col = "red", pch = 1)# adds the male in the graph
+legend(x= 3300,y=.2, legend = "baby_weight_nonsmoking_mothers",col = "black", pch = 20)
+legend(x= 3500,y=.4, legend = "baby_weight_smoking_mothers",col = "violet", pch = 20)
+```
+
+
+(c) What do you see?
+The graphs I was able to generate with the R code. We first see that male new borns weight more then female baby new born. Base were the vectical line is male which we generate is 3500 grams. On the other hand female weigh based on the vertical line around less then 3500 from looking from the graph.
+Now when we get more speifice with mothers who smoke while in pregrancy. We see males born from mothers that smoke from the vertical dash line is far under 3500 grams and the same goes for new born females.
+Now for the mothers that didn't smoke we see a much healther for both males and females. Males born form non smoking mothers weigh slightly more than 3500 grams from the vertical. We also see that females are also closer to 3500 grams.
+
+Mothers who drink alcohol while they have a child we see for males they are below 3000 grams. Females as well you can see the were born with a weight below 300 grams.
+
+Now mothers that have not used alcohol their we see their weights for female and male better then those mother that use alcohol during pregrancy. Males are slightly above 3500 grams from the vertical line and famale were born close to 3500 grams. 
+
+(d) Identify the distribution of weights for babies. [Hint: Use ecdf's...]
+(i) for male and female new born babies birth weights.
+The distribution for this one is seem to be approching a normal distribtion for both sexes weights.
+
+(ii) for new born babies birth weights with Smoking and Non Smoking Mother 
+It Seems that it is approching a normal given that both smoking and non smoking.
+
+(iii) for new born babies birth weights with mother used Alcohol and NonAlcohol
+Since they are less than thirty I was say the the distribution for moms that used Alcohol during pregnancy it the T- distribution for both males and females. 
+Now for mothers that did not use Alcohol during pregnancy look more of a normal distribution.
+
+(e) Compute the mean and standard deviation of the weights of the babies born to nonsmoking mothers and smoking mothers. 
+```{r}
+
+#Non smoking 
+babies_NonSmoking_mother<-subset(birthweights,select=c(Weight,Smoker), Smoker=="No" ,drop=T)# Get nonsmoker
+x<-babies_NonSmoking_mother$Weight
+mean(x)#The means of weightbabyGirl_NonSmoking_mother
+sd(x)# The standard deviation of weightbabyGirl_NonSmoking_mother
+#smoking mothers
+babies_Smoking_mother<-subset(birthweights,select=c(Weight,Smoker), Smoker=="Yes" ,drop=T)# Get nonsmoker
+x<-babies_Smoking_mother$Weight
+mean(x)#The means of weightbabyGirl_NonSmoking_mother
+sd(x)# The standard deviation of weightbabyGirl_NonSmoking_mother
+
+
+```
+
+(f) Is the observed mean difference in weights easily explained by chance or is there a real difference in the mean weights of North Carolina babies born to nonsmoking and smoking mother in 2004? [Hint: Use hist(), qq-plots...]
+```{r}
+babies_NonSmoking_mother<-subset(birthweights,select=c(Weight,Smoker), Smoker=="No" ,drop=T)# Get nonsmoker
+x<-babies_NonSmoking_mother$Weight
+hist(x)# The bar plot for babies_NonSmoking_mother
+qqnorm(x,main="Mothers that didn't smoke while pregnant")
+qqline(x)
+
+babies_Smoking_mother<-subset(birthweights,select=c(Weight,Smoker), Smoker=="Yes" ,drop=T)# Get nonsmoker
+x<-babies_Smoking_mother$Weight
+hist(x)# The bar plot for babies_NonSmoking_mother
+qqnorm(x,main="Mothers that smokes while pregnant")
+qqline(x)
+
+
+```
+From the plots above we see there is no differenece in mean weights.But looking throught the plots and the graphs we can conclude that babies who had mothers that didn't smoke while prgenate weight more.
+
+(g) Formulate the null and alternative hypotheses H_0 and H_1 and using the Two-Sample t-test for means answer the question in part (f)
+```{r}
+babies_NonSmoking_mother<-subset(birthweights,select=c(Weight,Smoker), Smoker=="No" ,drop=T)# Get nonsmoker
+babies_NonSmoking_mother<-babies_NonSmoking_mother$Weight
+babies_Smoking_mother<-subset(birthweights,select=c(Weight,Smoker), Smoker=="Yes" ,drop=T)# Get nonsmoker
+babies_Smoking_mother<-babies_Smoking_mother$Weight
+t.test(babies_NonSmoking_mother,babies_Smoking_mother,alternative="greater")
+```
+
+From looking at the graphs 
+$H_{0} =$ The means difference is 0  
+$H_{1} =$ The means difference is greater then 0
+
+(h) Do Parts (d), (e), (f) and (g) for new born babies birth weights with mother used Alcohol and NonAlcohol
+```{r}
+#gender not specific
+#weightbaby_nonAlcohol_mother 
+#Part D
+babyweight_nonAlcohol_mothers<-subset(birthweights,select=c(Weight,Alcohol),Smoker=="No" ,drop=T)#girls with smoking moms
+babyweight_Alcohol_mothers<-subset(birthweights,select=c(Weight,Alcohol), Smoker == "Yes"  ,drop=T)#Boys with smoking mom
+
+x<-babyweight_nonAlcohol_mothers$Weight
+plot.ecdf(x, xlab = "grams")#Adds the marker to the graph
+par(new=TRUE)
+x<-babyweight_Alcohol_mothers$Weight
+plot.ecdf(x, col = "violet", pch =2, add = TRUE)#Make the markers on the graph blue
+abline(v = mean(x), lty = 2, col="blue")#add the mean dash line 
+curve(pnorm(x,mean(x),sd(x)),1000,6000, col="red",add = TRUE)#add a normal curve
+legend(x= 1600,y=1, legend = "smoking mothers baby weight",col = "red", pch = 1)# adds the male in the graph
+legend(x= 3300,y=.2, legend = "baby_weight_nonsmoking_mothers",col = "black", pch = 20)
+legend(x= 3500,y=.4, legend = "baby_weight_smoking_mothers",col = "violet", pch = 20)
+#By looking at this graph we see that it normal
+
+#Part E
+x<-babyweight_nonAlcohol_mothers$Weight
+mean(x)#The means of weightbabyGirl_NonSmoking_mother
+sd(x)# The standard deviation of weightbabyGirl_NonSmoking_mother
+#smoking mothers
+x<-babyweight_Alcohol_mothers$Weight
+mean(x)#The means of weightbabyGirl_NonSmoking_mother
+sd(x)# The standard deviation of weightbabyGirl_NonSmoking_mother
+
+#part F
+x<-babyweight_nonAlcohol_mothers$Weight
+hist(x)# The bar plot for babies_NonSmoking_mother
+qqnorm(x,main="nonAlcohol while pregnant")
+qqline(x)
+
+x<-babyweight_Alcohol_mothers$Weight
+hist(x)# The bar plot for babies_NonSmoking_mother
+abline(v = mean(x), lty = 2, col="blue")
+qqnorm(x,main="Alcohol while pregnant")
+qqline(x)
+
+#part G
+x<-babyweight_nonAlcohol_mothers$Weight
+y<-babyweight_Alcohol_mothers$Weight
+t.test(x,y,alternative="greater")
+#In part we are testing is H_0 = 0 and H_1= Is grater than 0.
+```
+
+```{r}
+#part G for both weightbaby_Alcohol_mother and weightbaby_nonAlcohol_mother
+weightbaby_Alcohol_mother<-subset(birthweights,select=c(Weight,Alcohol),  Alcohol=="Yes" ,drop=T)
+Alcohol<-weightbaby_Alcohol_mother$Weight
+weightbaby_nonAlcohol_mother<-subset(birthweights,select=c(Weight,Alcohol),  Alcohol=="No" ,drop=T)
+nonAlcohol<-weightbaby_nonAlcohol_mother$Weight
+t.test(nonAlcohol,Alcohol,alternative="greater")
+
+
+```
+From looking at the graphs 
+$H_{0} =$ The means difference is 0  
+$H_{1} =$ The means difference is greater then 0
+
+3. The data set "babygirls2004.csv" contains a random sample of 40 baby girls born in Alaska and 40 baby girls born in Wyoming.
+(a) Perform some exploratory data analysis and obtain summary statistics on the weights of baby girls born in those two states ( do separate analyses for each state).
+
+
+
+(b) Bootstrap the difference in means, plot the distribution, and give the summary statistics. Obtain a 95% bootstrap percentile confidence interval and interpret this interval.
+```{r}
+#Part A
+setwd("~/Desktop/R/therbook")
+babygirls2004<-read.csv("babygirls2004.csv",header = TRUE)#Get the data
+attach(babygirls2004)#attaches the data
+babygirls2004
+head(babygirls2004)#reads the head
+str(babygirls2004)
+summary(babygirls2004)#Get the data
+hist(Weight)#The histgrasm of weight
+qqnorm(Weight,main="weight of baby girls")#qqplot for weight
+qqline(Weight)#qqline
+boxplot(Weight,main = "weight of baby girls")# the box plot for weight
+
+#Baby of girls in Alaska.
+baby_weight_Alaska<-subset(babygirls2004,select= Weight,  subset=State=="AK" ,drop=T)
+baby_weight_AK<-baby_weight_Alaska
+
+hist(baby_weight_AK)#The histgrasm of weight
+qqnorm(baby_weight_AK,main="baby weight of newborn girls in AK")#qqplot for weight
+qqline(baby_weight_AK)#qqline
+boxplot(baby_weight_AK,main = "baby weight of newborn girls in AK")# the box plot for weight
+
+#Baby of girls in Wyoming.
+baby_weight_Wyoming<-subset(babygirls2004,select= Weight,  subset=State=="WY" ,drop=T)
+baby_weight_WY<-baby_weight_Alaska
+
+hist(baby_weight_WY)#The histgrasm of weight
+qqnorm(baby_weight_WY,main="baby weight of newborn girls in WY")#qqplot for weight
+qqline(baby_weight_WY)#qqline
+boxplot(baby_weight_WY,main = "baby weight of newborn girls in WY")# the box plot for weight
+
+
+
+#part B__________________________________________________________________________________
+baby_weight_Alaska<-subset(babygirls2004,select= Weight,  subset=State=="AK" ,drop=T)
+baby_weight_AK<-baby_weight_Alaska
+baby_weight_Wyoming<-subset(babygirls2004,select=Weight,  subset=State=="WY" ,drop=T)
+baby_weight_WY<-baby_weight_Wyoming
+baby_weight_WY
+N<-10^4
+difference_in_means<-numeric(N)#from professor notes
+length_baby_weight_WY<-length(baby_weight_WY)
+length_baby_weight_AK<-length(baby_weight_AK)
+
+for (i in 1:N){
+  baby_weight_WY.boot<-sample(baby_weight_WY,length_baby_weight_WY,replace=TRUE)
+  baby_weight_AK.boot<-sample(baby_weight_AK,length_baby_weight_AK)
+  difference_in_means[i]<-(mean(baby_weight_WY.boot)-mean(baby_weight_AK.boot))
+}
+hist(difference_in_means)#hist of difference of means
+qqnorm(difference_in_means,main="difference_in_means")
+qqline(baby_weight_WY)#qqline
+sd(difference_in_means)# the standard deviation 
+quantile(difference_in_means,c(0.025,0.975))
+
+
+
+
+
+```
+By look at what was output by the program the 95% percentile confidence interval 181.0238 438.6506 of the means. By looking at the histgramn we can see that the plot is also a normal curve.
+
+(c) What is the bootstrap estimate of the bias? What fraction of the bootstrap standard error does it represent? 
+```{r}
+#We need to look for the differenece 
+bias<-mean(difference_in_means) - (mean(baby_weight_WY)-mean(baby_weight_AK))
+sd(difference_in_means)
+quantile(difference_in_means,c(0.025,0.975))
+error<-bias/sd(difference_in_means)
+error
+```
+
+ When calculate the the difference in means we get -0.58388 which is the means for two states. The standard error that we get from computing the difference of mean is 64.13166.
+ 
+4. Two college students collected data, "bookprices.csv" on the price of hardcover textbooks from two disciplinary areas: Mathematics and the Natural Sciences, and the Social Sciences. 
+(a) Perform some exploratory data analysis on book prices for each of the two disciplinary areas.
+```{r}
+setwd("~/Desktop/R/therbook")
+bookprices<-read.csv("bookprices.csv",header = TRUE)#Get the data
+bookprices
+attach(bookprices)#attaches the data
+summary(bookprices)#gives us the summary of the data
+
+Math_and_Science<-subset(bookprices,select= Price,  subset=Area=="Math & Science" ,drop=T)
+Math_and_Science<-Math_and_Science#give the column for price
+Math_and_Science
+hist(Math_and_Science)#histgram of math and science
+boxplot(Math_and_Science,main="Math_and_Science")# the box plot 
+qqnorm(Math_and_Science)#qq plot graph
+qqline(Math_and_Science)
+
+Social_Sciences<-subset(bookprices,select= Price,  subset=Area=="Social Sciences" ,drop=T)
+Social_Sciences<-Social_Sciences
+hist(Social_Sciences)#histgram of Social_Sciences
+boxplot(Social_Sciences,main="Math_and_Science")# the box plot 
+qqnorm(Social_Sciences)#qq plot graph
+qqline(Social_Sciences)
+
+```
+
+(b) Bootstrap the mean of book price for each area separately and describe the distributions.
+```{r}
+Math_and_Science<-subset(bookprices,select= Price,  subset=Area=="Math & Science" ,drop=T)
+Math_and_Science<-Math_and_Science
+Math_and_Science
+Social_Sciences<-subset(bookprices,select= Price,  subset=Area=="Social Sciences" ,drop=T)
+Social_Sciences<-Social_Sciences
+
+#Math and Science
+
+N<-10^4
+n<-length(Math_and_Science)
+
+Math_and_Science_means<-numeric(N)
+for (i in 1:N){# To get the boot distrubtions
+  mean_.boot<-sample(Math_and_Science,n,replace=TRUE)
+  Math_and_Science_means[i]<-mean(mean_.boot)
+}
+hist(Math_and_Science_means,main = "Bootstrp dist.")# histgram 
+abline(v=mean(Math_and_Science_means),col="red")
+qqnorm(Math_and_Science_means)#qqplot
+qqline(Math_and_Science_means)
+mean(Math_and_Science_means)#the mean price of the book
+mean(Math_and_Science_means)-mean(Math_and_Science)#Getting the error
+sd(Math_and_Science_means)#Standard devation 
+```
+We see that the boot strap mean that we find is 156.6992 and the standard deviation is 7.373006.The bias we obtain is very small -0.03487178.
+```{r}
+Social_Sciences<-subset(bookprices,select= Price,  subset=Area=="Social Sciences" ,drop=T)
+Social_Sciences<-Social_Sciences
+N<-10^4
+n<-length(Social_Sciences)
+
+Social_Sciences_means<-numeric(N)
+for (i in 1:N){# To get the boot distrubtions
+  mean_.boot<-sample(Social_Sciences,n,replace=TRUE)
+ Social_Sciences_means[i]<-mean(mean_.boot)
+}
+hist(Social_Sciences_means,main = "Bootstrp dist.")# histgram
+
+abline(v=mean(Social_Sciences_means),col="red")
+qqnorm(Social_Sciences_means)#qqplot
+qqline(Social_Sciences_means)
+mean(Social_Sciences_means)#the mean price of the book
+mean(Social_Sciences_means)-mean(Social_Sciences)#Getting the error
+sd(Social_Sciences_means)#Standard devation 
+```
+We see here the bootstrap mean of the cost of the book is 98.94783 and the standard devation is 16.72277. and the boot strap bias is minimal of -0.04216518.
+
+(c) Bootstrap the ratio of means. Provide plots of the bootstrap distribution and comments.
+```{r}
+setwd("~/Desktop/R/therbook")
+bookprices<-read.csv("bookprices.csv")#Get the data
+Math_and_Science<-subset(bookprices,select= Price,  subset=Area=="Math & Science" ,drop=T)
+Social_Sciences<-subset(bookprices,select= Price,  subset=Area=="Social Sciences" ,drop=T)
+Math_and_Science<-Math_and_Science
+Social_Sciences<-Social_Sciences
+Math_and_Science.l<-length(Math_and_Science)#geting the lenght of the vectors
+Social_Sciences.l<-length(Social_Sciences)
+
+N<-10^4
+ratio_of_means<-numeric(N)
+
+for(i in 1:N){#boot strap distrubution  
+  Math_and_Science.boot<-sample(Math_and_Science,Math_and_Science.l,replace = TRUE)
+  Social_Sciences.boot<-sample(Social_Sciences,Social_Sciences.l,replace = TRUE)
+  ratio_of_means[i]<-(mean(Math_and_Science.boot)/mean(Social_Sciences.boot))#the ratio of the means 
+}
+mean(ratio_of_means)#the means 
+sd(ratio_of_means)#standard devation 
+hist(ratio_of_means)#histgrsm
+abline(v=mean(ratio_of_means),col="blue")
+
+qqnorm(ratio_of_means)#the qqplot
+qqline(ratio_of_means)
+
+
+```
+As we see here the bootstrap distrubtion is skewed to the right by looking at the prevouis graphs.So we can the boot strap distrubtion mean is not normal. 
+
+(d) Find the 95% bootstrap percentile interval for the ratio of means. Interpret this interval.
+```{r}
+quantile(ratio_of_means,c(0.025,0.975))
+```
+We boot strap 95% percentile confidence interval for the ratio the we obtain of the means is (13.63264, 23.68388).
+So the true mean in between this (13.63264, 23.68388).
+(e) What is the bootstrap estimate of the bias? What fraction of the bootstrap standard error does it represent?
+$Bias_{bs}[\hat{\theta}]=E[\hat{\theta}]-\hat{\theta}$
+
+```{r}
+#The bias
+bias=mean(ratio_of_means)-mean(Math_and_Science)/mean(Social_Sciences)
+bias/sd(ratio_of_means)
+
+```
+We Can is here that our bais is 0.1622367 at the standard error. This can have a affect our accuracy of confidence interval.
+
+5. Consider the weights of boy and girl babies born in Texas in 2004: "texasbirth2004.csv".
+(a) Perform some exploratory data analysis and obtain summary statistics on the weights of baby girls born in the state.
+```{r}
+setwd("~/Desktop/R/therbook")
+texasbirth2004<-read.csv("texasbirths2004.csv",header = TRUE)#Get the data
+attach(texasbirth2004)#attach the data
+head(texasbirth2004)#reads the head
+str(texasbirth2004)
+summary(texasbirth2004)#summary
+texasbirth2004<-subset(texasbirth2004,select= c(Gender,Weight),Gender=="Female" ,drop=T)
+Weight_girls<-texasbirth2004$Weight#Get only the wight
+hist(Weight_girls)#histgram
+abline(v=mean(Weight_girls),col="Red")#add the red line in the mean
+boxplot(Weight_girls)#boxplot
+qqnorm(Weight_girls)#qqplot
+qqline(Weight_girls)
+
+
+```
+
+(b) Identify the distribution
+This distribution look like the t-distribution becasue of the histogram and the plot.
+
+(c) Construct a 95% t confidence interval for the mean difference in weights(boys-girls).
+```{r}
+setwd("~/Desktop/R/therbook")
+
+texasbirth2004<-read.csv("texasbirths2004.csv",header = TRUE)#Get the data
+attach(texasbirth2004)#attach the data
+head(texasbirth2004)#reads the head
+str(texasbirth2004)
+summary(texasbirth2004)#summary
+
+
+texasbirth2004_girls<-subset(texasbirth2004,select= c(Gender,Weight),Gender=="Female" ,drop=T)
+texasbirth2004_boy<-subset(texasbirth2004,select= c(Gender,Weight),Gender=="Male" ,drop=T)
+
+Weight_girls<-texasbirth2004_girls$Weight#Get only the wight
+Weight_boy<-texasbirth2004_boy$Weight
+
+t.test(Weight_boy,Weight_girls)
+t.test(Weight_boy)
+t.test(Weight_girls)
+```
+I computed the t- test for Weight_boy and Weight_girls and it produce a interval of (3336.843  3220.939). Now if we look at the t-test for just Weight_boy it has a interval (3299.939 3373.748). If we look also at the t-test for Weight_girls the interval is (3181.160 3260.718). Sinc we don't see there share a interval that tells us that the mean weight are different from boys and girls.
+
+6.  Run simulations to see if the t ratio T=(X.bar-mu)/(S/sqrt(n)) has a t distribution or even an approximate t distribution when the samples are drawn from a non-normal distribution. Be sure to superpose the appropriate t density curve onto your histograms. Try two different non-normal distributions and remember to see if sample size makes a difference.
+```{r}
+N<-10^4
+num<-numeric(N)
+sample_size<-40#smaple size
+for(i in 1:N)
+{# I try to simulate the t-distrubtion
+  #sample size of 8
+  x<-rexp(n,1/8)
+  x.bar<-mean(x)
+  stand<-sd(x)
+  num[i]<-(x.bar-8)/(stand/sqrt(n))
+}
+x1<-rt(10^4,14)
+hist(num,prob=T)
+xv<-seq(-4,4,.01) 
+yv<-dt(xv,4)
+lines(xv,yv,col="red")
+
+B2<-10^4
+A2<-numeric(B2)
+b2<-50
+for (i in 1:B2){
+  x<-runif(B2,min=5,max = 50)
+  x.bar<-mean(x)
+  stand<-sd(x)
+  num[i]<-(x.bar-8)/(stand/sqrt(n))
+}
+x2<-rt(10^4,14)
+hist(num,prob=T)
+xv<-seq(-6,4,.01) 
+yv<-dt(xv,8)
+lines(xv,yv,col="red")
+
+
+```
+From producing these graph we can see the the t distrubution 
+7.  In computing the confidence interval for a difference in means, if we knew that the population variances are the same, then we can pool the variances, estimating the common variance using all the data. Pooling the variances provides only a small gain when the variances are the same, but can be badly off when the variances are different. We cautioned against using this result since, in practice, it is difficult to determine whether the population  variances are indeed the same.
+
+Run a simulation to see how well the confidence interval for the difference in means compare in the pooled and un-pooled variance cases when the population variances are not the same.
+
+(a) Execute and Explain the following code:
+
+```{r}
+pooledCount<-0 #set count to 0
+unpooledCount<-0#set count to 0
+m<-20#Sample size
+n<-10#sample size
+N<-10^5
+for(i in 1:N){
+  x<-rnorm(m,8,10)#random sample from N(8,10^2)
+  y<-rnorm(n,3,15)#random sample from N(3, 15^2)
+  CI.pooled<-t.test(x,y,var.equal=T)$conf#variance
+  CI.unpooled<-t.test(x,y)$conf#variance
+  
+  if (CI.pooled[1]<=5 && 5<=CI.pooled[2])# check to see if 5 is in the interval
+    pooledCount<-pooledCount+1#increment the count by 1 of pooledCount
+  if (CI.unpooled[1]<=5 && 5<=CI.unpooled[2])
+    unpooledCount<-unpooledCount+1#increment the count by 1 of unpooledCount
+}
+
+pooledCount/N#Take the ratio in time 0 of CI
+unpooledCount/N
+```
+(b) Compare the performance of the versions of the confidence interval for difference in means.
+From looking at the code I can see that both confendice interval are being computed. This happen in order to computer the difference in means of the two samples when compared to the pool varancie when they are not equal. When the sample sizes are equal they preform well. If we don't know if the varance of the two sample are not equal then we should use the unpooled method in order to get the cofendince intervals.
+
+
+(c) Repeat the simulation with different sample sizes:
+
+
+```{r}
+
+pooledCount<-0 #set count to 0
+unpooledCount<-0#set count to 0
+m<-80#Sample size
+n<-40#sample size
+N<-10^5
+for(i in 1:N){
+  x<-rnorm(m,8,10)#random sample from N(8,10^2)
+  y<-rnorm(n,3,15)#random sample from N(3, 15^2)
+  CI.pooled<-t.test(x,y,var.equal=T)$conf#variance
+  CI.unpooled<-t.test(x,y)$conf#variance
+  
+  if (CI.pooled[1]<=5 && 5<=CI.pooled[2])# check to see if 5 is in the interval
+    pooledCount<-pooledCount+1#increment the count by 1 of pooledCount
+  if (CI.unpooled[1]<=5 && 5<=CI.unpooled[2])
+    unpooledCount<-unpooledCount+1#increment the count by 1 of unpooledCount
+}
+
+pooledCount/N#Take the ratio in time 0 of CI
+unpooledCount/N
+```
+m=120,n=80;
+```{r}
+pooledCount<-0 #set count to 0
+unpooledCount<-0#set count to 0
+m<-120#Sample size
+n<-80#sample size
+N<-10^5
+for(i in 1:N){
+  x<-rnorm(m,8,10)#random sample from N(8,10^2)
+  y<-rnorm(n,3,15)#random sample from N(3, 15^2)
+  CI.pooled<-t.test(x,y,var.equal=T)$conf#variance
+  CI.unpooled<-t.test(x,y)$conf#variance
+  
+  if (CI.pooled[1]<=5 && 5<=CI.pooled[2])# check to see if 5 is in the interval
+    pooledCount<-pooledCount+1#increment the count by 1 of pooledCount
+  if (CI.unpooled[1]<=5 && 5<=CI.unpooled[2])
+    unpooledCount<-unpooledCount+1#increment the count by 1 of unpooledCount
+}
+
+pooledCount/N#Take the ratio in time 0 of CI
+unpooledCount/N
+```
+
+m=80, n=80.
+```{r}
+pooledCount<-0 #set count to 0
+unpooledCount<-0#set count to 0
+m<-80#Sample size
+n<-80#sample size
+N<-10^5
+for(i in 1:N){
+  x<-rnorm(m,8,10)#random sample from N(8,10^2)
+  y<-rnorm(n,3,15)#random sample from N(3, 15^2)
+  CI.pooled<-t.test(x,y,var.equal=T)$conf#variance
+  CI.unpooled<-t.test(x,y)$conf#variance
+  
+  if (CI.pooled[1]<=5 && 5<=CI.pooled[2])# check to see if 5 is in the interval
+    pooledCount<-pooledCount+1#increment the count by 1 of pooledCount
+  if (CI.unpooled[1]<=5 && 5<=CI.unpooled[2])
+    unpooledCount<-unpooledCount+1#increment the count by 1 of unpooledCount
+}
+
+pooledCount/N#Take the ratio in time 0 of CI
+unpooledCount/N
+```
+
+(d) Discuss the output of the part(C).
+When we got the results we can see that the unpooled vanince confidence intervals did way better to obtain the true mean difference when the sample size are not equal. But when I saw both sample size equal the pooled and unpooled did well. But If we don't know if the sample sizes are equal then we should just use the unpooled method.
+
+
+8. Suppose researchers wish to study the effectiveness of a new drug to alleviate hives due to math anxiety. Seven hundred math students are randomly assigned to take either this drug or a placebo. Suppose 34 of the 350 students who took the drug break out in hives compared to 56 of the 350 students who took the placebo.
+(a) Compute a Compute a 95% confidence interval for the proportion of students taking the drug who break out in hives. The proportion of students taking the drug who break out in hives.
+```{r}
+x=34
+y=350
+prop.test(x,y,conf.level = 0.95)
+```
+
+(b) Compute a 95% confidence interval for the proportion of students on the placebo who break out in hives.
+```{r}
+x<-56
+y<-350
+prop.test(x,y,conf.level = 0.95)
+
+```
+
+(c) Do the intervals overlap? What, if anything, can you conclude about the effectiveness of the drug?
+The confidence levels for both do overlap. We can not conclude that the drugs work.
+
+(d) Compute a 95% confidence interval for the difference in proportions of students who break out in hives by using or not using this drug and give a sentence interpreting this interval.
+```{r}
+x=c(34,56)
+y=c(350,350)
+prop.test(x,y,conf.level = 0.95)
+
+```
+
+
